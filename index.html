@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <title>Development</title>
+<!--FONTS-->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,200,500,600,700,800,900,300italic,400italic,500italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,700,300,100' rel='stylesheet' type='text/css'>
+    <style src="jet.css"></style>
+    <script src="jet.js"></script>
+<!--CSS-->
+<!--    <link href="jet.css" rel="stylesheet"/>-->
+</head>
+<body>
+
+
+
+<style>
+    #jet {
+        min-width: 100vw;
+        min-height: 100vh;
+        background: lightblue;
+        
+    }
+    .jet__block, .jet__block2 {
+        width: 300px;
+        height: 300px;
+        background-color: grey;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: center;
+        justify-content: center;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+    .pen, .pen2 {
+        box-sizing: border-box;
+        width: 50%;
+        height: 50%;
+        background: #FFF;
+        border: 1px solid #000;
+    }
+    .pen:nth-of-type(2n + 3), .pen2:nth-of-type(2n + 3) {
+         background: green;   
+    }
+    #top {
+        border: 3px solid blue !importants;
+        margin: 40px 0;
+    }
+</style>
+
+<div id="jet">
+    <div id="top" class="jet__block">
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+    </div>
+    <div id="top2" class="jet__block">
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+    </div>
+    <div id="top3" class="jet__block">
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+    </div>
+    <div id="top4" class="jet__block">
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+    </div>
+    <div id="top5" class="jet__block">
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+        <div class="pen"></div>
+    </div>
+</div>
+
+
+
+<script>
+//    j('.jet__block').fadeOut(1500).html('asdf').fadeIn(2000).append("<p>paragr</p>").end();
+j('.jet__block').index(1).slideUp(1500).delay(1000).slideDown(200).end();
+
+//j('.jet__block').index(1).on('click', function () {
+//    console.log('here');
+//});
+    
+//    j('.jet__block').index(2);
+
+// j('.jet__block').find('.pen').fadeOut(1550).html('asdf').fadeIn(2000).end();
+//    j('#top2').index().end();
+</script>
+</body>
+</html>
