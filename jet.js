@@ -69,8 +69,12 @@
     JetElem.prototype.on = function (event, callback) {
         var t = this,
             i;
-        for (i = 0; i < t.element.length; i += 1) {
-            t.eventHandler.bindEvent(event, callback, t.element[i]);
+        if (t.element.length) {
+            for (i = 0; i < t.element.length; i += 1) {
+                t.eventHandler.bindEvent(event, callback, t.element[i]);
+            }
+        } else {
+            t.eventHandler.bindEvent(event, callback, document);
         }
     };
     
@@ -116,6 +120,25 @@
         var delay = delay || 500;
         arrs(this, delay, null, null);
         this.queue.push(placeHold);
+        return this;
+    };
+    JetElem.prototype.empty = function () {
+         var i,
+            elems = document.querySelectorAll(this.selector);
+        for (i = 0; i < elems.length; i += 1) { 
+            elems[i].innerHTML = "";
+        }
+//        arrs(this, null, this.selector, null);
+//        var th = checkForIndex(this),
+//            empty = function (speed, el) {
+//                var i,
+//                    elems = document.querySelectorAll(el);
+//                for (i = 0; i < elems.length; i += 1) { 
+//                    console.log('running');
+//                    elems[i].innerHTML = "";
+//                }
+//            }
+//        this.queue.push(empty);
         return this;
     };
     JetElem.prototype.fadeOut = function (speed) {
@@ -266,6 +289,23 @@
         request.send(null);
         return this;
     };
+    JetElem.prototype.hasClass = function (classs) {
+        if (classs.constructor === Array) {
+            var i;
+            var elemClasses = this.element[0].classList;
+            for (i = 0; i < classs.length; i += 1) { 
+                if (elemClasses.contains(classs[i])) {
+                    return true;
+                }
+            }
+        } else {
+            var elemClass = this.element[0].classList;
+            if (elemClass.contains(classs)) {
+                return true;
+            }
+        }
+        return false;
+    };
     JetElem.prototype.hide = function () {
         arrs(this, 0, null, null);
         var th = checkForIndex(this),
@@ -279,12 +319,13 @@
         return this;
     };
     JetElem.prototype.html = function (html) {
-        arrs(this, 0, html, null);
         var th = checkForIndex(this);
-        var htm = function (speed, html, tertiary) {
+        arrs(this, 0, html, this.selector);
+        var htm = function (speed, html, th) {
                 var i;
-                for (i = 0; i < th.length; i += 1) {
-                    th[i].innerHTML = html;
+                var elems = document.querySelectorAll(th);
+                for (i = 0; i < elems.length; i += 1) {
+                    elems[i].innerHTML = html;
                 }
             };
         this.queue.push(htm);
@@ -301,7 +342,7 @@
                 i;
             for (i = 0; i < children.length; i += 1) {
                 if (children[i] === targ) {
-                    that.indexNum = num;
+                    that.indexNum = num - 1;
                 } else {
                     if (children[i].nodeType === 1) {
                         num++;
@@ -343,6 +384,13 @@
             };
         this.queue.push(prepend);
         return this;
+    };
+    JetElem.prototype.remove = function () {
+        var i,
+            el = document.querySelectorAll(this.selector);
+        for (i = 0; i < el.length; i += 1) {
+            el[i].parentElement.removeChild(el[i]);
+        }
     };
     JetElem.prototype.scrollTo = function (speed, offset) {
         var offset = offset || 0,
@@ -402,34 +450,6 @@
         return this;
         
     };
-    
-//    JetElem.prototype.slideUp = function (speed) {
-//        arrs(this, speed, null, null);
-//        var th = checkForIndex(this),
-//            slideUp = function (speed) {
-//                var speeds = speed * 0.001 || 0.500,
-//                    trans = speeds + "s",
-//                    i;
-//                for (i = 0; i < th.length; i += 1) {
-//                    (function () {
-//                        var elem = th[i];
-//                        var initialHeight = elem.offsetHeight + "px";
-//                        elem.setAttribute('data-initial-height', initialHeight);
-//                        elem.style.webkitTransition = 'initial';
-//                        elem.style.transition = 'initial';
-//                        elem.style.maxHeight = initialHeight;
-//                        elem.style.webkitTransition = "max-height " + trans;
-//                        elem.style.transition = "max-height " + trans;
-//                        setTimeout(function () {
-//                            elem.style.maxHeight = '0';
-//                        });
-//                    }());
-//                }
-//            };
-//        this.queue.push(slideUp);
-//        return this;
-//    };
-    
     JetElem.prototype.slideDown = function (speed, display) {
         var disp = display || "flex";
         arrs(this, speed, disp, null);
@@ -497,7 +517,11 @@
     JetElem.prototype.end = function () {
         var delay = function delay(ms) {
             return new Promise(function (resolve) {
-                return setTimeout(resolve, ms);
+                if (ms !== null) {
+                    return setTimeout(resolve, ms);
+                } else {
+                    return resolve;
+                }
             });
         },
             speeds = this.speeds,
@@ -524,7 +548,6 @@
         }
         return this;
     };
-    
     JetElem.prototype.init = function () { //INITIALIZATION
         if (this.selector !== null) {
             switch (this.selector[0]) {
@@ -543,9 +566,10 @@
             default:
                 this.element = Array.prototype.slice.call(document.querySelectorAll(this.selector));
             }
+        } else {
+            this.element = document;
         }
     };
-    
     j = function (selector) {
         var el = new JetElem(selector); // new JetElem
         el.init(); // initialize the JetElem
