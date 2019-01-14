@@ -335,14 +335,22 @@
         var targ = this.element[0],
             sel = this.selector.split('.')[1],
             that = this;
-        if (typeof input === 'undefined') { //IF NO USER INPUT INDEX NUMBER
+        if (input === true) {
+            var th = checkForIndex(this),
+                all = document.getElementsByClassName(sel);
+            Array.from(th).forEach(function (elem, index) {
+                if (targ === elem) {
+                    that.indexNum = index;
+                }
+            });
+        } if (typeof input === 'undefined') { //IF NO USER INPUT INDEX NUMBER
             arrs(this, 0, targ, sel);
             var children = targ.parentElement.children,
                 num = 0,
                 i;
             for (i = 0; i < children.length; i += 1) {
                 if (children[i] === targ) {
-                    that.indexNum = num - 1;
+                    that.indexNum = num;
                 } else {
                     if (children[i].nodeType === 1) {
                         num++;
@@ -357,12 +365,13 @@
         }
         return this;
     };
-    JetElem.prototype.isVisible = function () {
+    JetElem.prototype.isVisible = function (ind) {
         var th = checkForIndex(this),
-            that = this;
+            that = this,
+            ind = ind || 0;
         arrs(this, 0, th, null);
         (function () {
-            var r = th[0].getBoundingClientRect(),
+            var r = th[ind].getBoundingClientRect(),
                 viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
             if (!(r.bottom < 0 || r.top - viewHeight >= 0)) {
                 that.visible = true;
@@ -395,6 +404,7 @@
     JetElem.prototype.scrollTo = function (speed, offset) {
         var offset = offset || 0,
             elem = this.element[0];
+
         arrs(this, speed, offset, null);
         var scroller = function (speed, offset) {
             var offset = offset || 0;
@@ -412,9 +422,12 @@
                         scrollAmt = Math.ceil((easeInOutQuad(time) * (destinationOffsetToScroll - start)) + start + offset);
                     ani = requestAnimationFrame(animate);
                     window.scroll(0, scrollAmt);
-                    if (window.pageYOffset + 60 === destinationOffset || window.pageYOffset + 60 === destinationOffset - elem.scrollHeight) {
+                    if (window.pageYOffset + offset === destinationOffset || window.pageYOffset + offset === destinationOffset - elem.scrollHeight) {
                         cancelAnimationFrame(ani);
                     }
+                    setTimeout(function () {
+                        cancelAnimationFrame(ani);
+                    }, speed + 40);
                 }
                 ani = requestAnimationFrame(animate);
             }());
@@ -449,7 +462,7 @@
         this.queue.push(methods.slideUp);
         return this;
         
-    };
+    };    
     JetElem.prototype.slideDown = function (speed, display) {
         var disp = display || "flex";
         arrs(this, speed, disp, null);
